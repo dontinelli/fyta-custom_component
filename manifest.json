@@ -1,0 +1,14 @@
+{
+  "domain": "fyta",
+  "name": "FYTA",
+  "codeowners": ["@dontinelli"],
+  "config_flow": true,
+  "dependencies": [],
+  "documentation": "https://www.home-assistant.io/integrations/fyta",
+  "homekit": {},
+  "iot_class": "local_push",
+  "requirements": [],
+  "ssdp": [],
+  "version": "0.1.0",
+  "zeroconf": []
+}
