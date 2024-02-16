@@ -1,8 +1,9 @@
 # coding: utf-8
 
 from datetime import datetime
+import pytz
 
-from .client import Client
+from fyta_client import Client
 
 PLANT_STATUS = {
     1: "too low",
@@ -13,7 +14,7 @@ PLANT_STATUS = {
     }
 
 class FytaConnector(object):
-    def __init__(self, email, password, access_token = "", expiration = None):
+    def __init__(self, email, password, access_token = "", expiration = None, timezone: pytz.timezone = pytz.utc):
 
         self.email = email
         self.password = password
@@ -21,6 +22,7 @@ class FytaConnector(object):
         self.online = False
         self.plant_list = {}
         self.plants = {}
+        self.timezone = timezone
 
     async def test_connection(self) -> bool:
 
@@ -82,7 +84,7 @@ class FytaConnector(object):
         current_plant |= {"moisture": float(plant_data["measurements"]["moisture"]["values"]["current"])}
         current_plant |= {"salinity": float(plant_data["measurements"]["salinity"]["values"]["current"])}
         current_plant |= {"battery_level": float(plant_data["measurements"]["battery"])}
-        current_plant |= {"last_updated": datetime.fromisoformat(plant_data["sensor"]["received_data_at"])}
+        current_plant |= {"last_updated": self.timezone.localize(datetime.fromisoformat(plant_data["sensor"]["received_data_at"]))}
 
         return current_plant
 

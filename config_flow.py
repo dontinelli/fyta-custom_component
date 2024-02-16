@@ -2,6 +2,13 @@
 from __future__ import annotations
 
 import logging
+from fyta_exceptions import (
+    FytaError,
+    FytaConnectionError,
+    FytaAuthentificationError,
+    FytaPasswordError,
+    FytaPlantError,
+    )
 from typing import Any
 
 import voluptuous as vol
@@ -12,7 +19,7 @@ from homeassistant.core import HomeAssistant, callback
 
 from .const import DOMAIN
 
-from .fyta_connector import FytaConnector
+from fyta_connector import FytaConnector
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -31,9 +38,14 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
     if not result:
         raise CannotConnect
 
-    result = await fyta.login()
-    if not result:
-        raise InvalidAuth
+    try:
+        await fyta.login()
+    except FytaConnectionError as ex:
+        raise CannotConnect from ex
+    except FytaAuthentificationError as ex:
+        raise InvalidAuth from ex
+    except FytaPasswordError as ex:
+        raise InvalidPassword from ex
 
     return {"title": data[CONF_USERNAME]}
 
@@ -61,8 +73,9 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             except InvalidAuth:
                 errors[CONF_USERNAME] = "Athentication error"
                 errors[CONF_PASSWORD] = "Athentication error"
+            except InvalidPassword:
+                errors[CONF_PASSWORD] = "Athentication error"
             except Exception:  # pylint: disable=broad-except
-                _LOGGER.exception("Unexpected exception")
                 errors["base"] = "unknown"
 
         # If there is no user input or there were errors, show the form again, including any errors that were found with the input.
@@ -76,4 +89,8 @@ class CannotConnect(exceptions.HomeAssistantError):
 
 
 class InvalidAuth(exceptions.HomeAssistantError):
-    """Error to indicate there is an invalid hostname."""
+    """Error to indicate there are invalid credentials."""
+
+class InvalidPassword(exceptions.HomeAssistantError):
+    """Error to indicate there is an invalid password."""
+
