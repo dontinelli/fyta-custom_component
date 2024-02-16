@@ -1,7 +1,10 @@
-from datetime import datetime, timedelta
-import logging
+"""Coordinator for FYTA integration."""
 
 import async_timeout
+from datetime import datetime, timedelta
+from fyta_connector import FytaConnector
+import logging
+
 
 from homeassistant.components.binary_sensor import BinarySensorEntity
 from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
@@ -19,7 +22,7 @@ from homeassistant.helpers.update_coordinator import (
 )
 
 from .const import DOMAIN
-from .fyta_connector import FytaConnector
+
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -108,5 +111,3 @@ class FytaEntity(CoordinatorEntity[FytaCoordinator]):
         self.entity_description = description
         self.plant_id = plant_id
 
-        #print(entry.entry_id)
-        #print(f"{plant_id}-{description.key} - {self._attr_device_info}")

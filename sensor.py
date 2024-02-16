@@ -77,6 +77,7 @@ SENSORS: Final[list[FytaSensorEntityDescription]] = [
     FytaSensorEntityDescription(
         key="temperature",
         translation_key="fyta_temperature",
+        native_unit_of_measurement="°C",
         device_class=SensorDeviceClass.TEMPERATURE,
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:thermometer",
@@ -91,6 +92,7 @@ SENSORS: Final[list[FytaSensorEntityDescription]] = [
     FytaSensorEntityDescription(
         key="moisture",
         translation_key="fyta_moisture",
+        native_unit_of_measurement="%",
         device_class=SensorDeviceClass.MOISTURE,
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:water-percent",
@@ -112,6 +114,7 @@ SENSORS: Final[list[FytaSensorEntityDescription]] = [
     FytaSensorEntityDescription(
         key="battery_level",
         translation_key="fyta_battery_level",
+        native_unit_of_measurement="%",
         device_class=SensorDeviceClass.BATTERY,
         state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
@@ -121,7 +124,6 @@ SENSORS: Final[list[FytaSensorEntityDescription]] = [
         key="last_updated",
         translation_key="fyta_last_updated",
         device_class=SensorDeviceClass.TIMESTAMP,
-        state_class=SensorStateClass.MEASUREMENT,
         entity_category=EntityCategory.DIAGNOSTIC,
         icon="mdi:update",
     ),
@@ -142,7 +144,7 @@ async def async_setup_entry(
 
     async_add_entities(
         [
-            FytaEntity(coordinator, entry, sensor)
+            FytaSensor(coordinator, entry, sensor)
             for sensor in SENSORS
             if sensor.key in coordinator.data
         ]
@@ -151,7 +153,7 @@ async def async_setup_entry(
     for plant_id in coordinator.plant_list.keys():
         async_add_entities(
             [
-                FytaEntity(coordinator, entry, sensor, plant_id)
+                FytaSensor(coordinator, entry, sensor, plant_id)
                 for sensor in SENSORS
                 if sensor.key in coordinator.data[plant_id]
             ]
