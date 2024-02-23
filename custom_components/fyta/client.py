@@ -1,26 +1,26 @@
-"""Client to access FYTA API"""
+"""Client to access FYTA API."""
 # The documentation for the API can be found here:
 # https://fyta-io.notion.site/FYTA-Public-API-d2f4c30306f74504924c9a40402a3afd
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
-import json
-import logging
-import requests
-
 import asyncio
+import logging
+from homeassistant.exceptions import ConfigEntryAuthFailed, HomeassistantAnalyticsConnectionError
+from datetime import datetime, timedelta
+
 from aiohttp import BasicAuth, ClientSession
-from dataclasses import dataclass, field
 
 FYTA_AUTH_URL = 'http://web.fyta.de/api/auth/login'
 FYTA_PLANT_URL = 'http://web.fyta.de/api/user-plant'
 
 _LOGGER = logging.getLogger(__name__)
 
-class Client(object):
-    def __init__(self, email: str, password: str, access_token = "", expiration = None):
+class Client:
+    """Client to access FYTA API."""
 
+    def __init__(self, email: str, password: str, access_token = "", expiration = None):
+        """Initialize the client."""
         self.session: ClientSession | None = None
 
         self.email = email
@@ -37,7 +37,7 @@ class Client(object):
 
 
     async def test_connection(self) -> bool:
-        """Test the connection to FYTA-Server"""
+        """Test the connection to FYTA-Server."""
 
         response = await self.session.post(FYTA_AUTH_URL)
         r=await response.text()
@@ -63,12 +63,9 @@ class Client(object):
             async with asyncio.timeout(self.request_timeout):
                 response = await self.session.post(url=FYTA_AUTH_URL, auth=BasicAuth(self.email, self.password), json=payload)
 
-        except asyncio.TimeoutError as exception:
-            _LOGGER.exception("timeout error")
+        except asyncio.TimeoutError:
             msg = "Timeout occurred while connecting to Fyta-server"
-            #raise HomeassistantAnalyticsConnectionError(msg) from exception
-
-        content_type = response.headers.get("Content-Type", "")
+            _LOGGER.exception(msg)
 
         json_response = await response.json()
 
@@ -83,7 +80,7 @@ class Client(object):
         return {"access_token": self.access_token, "expiration": self.expiration}
 
     async def get_plants(self) -> dict:
-        """Get a list of all available plants from FYTA"""
+        """Get a list of all available plants from FYTA."""
 
         if self.session is None:
             self.session = ClientSession()
@@ -115,7 +112,7 @@ class Client(object):
         return plants
 
     async def get_plant_data(self, plant_id: int) -> dict:
-        """Get information about a specific plant"""
+        """Get information about a specific plant."""
 
 
         if self.session is None:

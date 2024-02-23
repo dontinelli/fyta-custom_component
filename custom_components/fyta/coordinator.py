@@ -1,21 +1,14 @@
-from datetime import datetime, timedelta
+"""Coordinator for Fyta integration."""
 import logging
+from datetime import datetime, timedelta
 
-import async_timeout
-
-from homeassistant.components.binary_sensor import BinarySensorEntity
-from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
+from homeassistant.components.sensor import SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.core import callback, HomeAssistant
-from homeassistant.exceptions import ConfigEntryAuthFailed
+from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
-from homeassistant.helpers import device_registry as DeviceRegistry
-from homeassistant.helpers.entity_platform import AddEntitiesCallback
-
 from homeassistant.helpers.update_coordinator import (
     CoordinatorEntity,
     DataUpdateCoordinator,
-    UpdateFailed,
 )
 
 from .const import DOMAIN
@@ -64,6 +57,7 @@ class FytaCoordinator(DataUpdateCoordinator):
         return data
 
     async def renew_authentication(self) -> bool:
+        """Renew the authentication token."""
         await self.fyta.login()
         self.access_token = self.fyta.access_token
         self.expiration = self.fyta.expiration
