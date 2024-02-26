@@ -4,15 +4,26 @@
 
 from __future__ import annotations
 
+from datetime import datetime, timedelta
+import logging
+import requests
+
 import asyncio
 import logging
-from homeassistant.exceptions import ConfigEntryAuthFailed, HomeassistantAnalyticsConnectionError
 from datetime import datetime, timedelta
 
 from aiohttp import BasicAuth, ClientSession
 
-FYTA_AUTH_URL = 'http://web.fyta.de/api/auth/login'
-FYTA_PLANT_URL = 'http://web.fyta.de/api/user-plant'
+from .fyta_exceptions import (
+    FytaError,
+    FytaConnectionError,
+    FytaAuthentificationError,
+    FytaPasswordError,
+    FytaPlantError,
+    )
+
+FYTA_AUTH_URL = 'https://web.fyta.de/api/auth/login'
+FYTA_PLANT_URL = 'https://web.fyta.de/api/user-plant'
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -63,15 +74,19 @@ class Client:
             async with asyncio.timeout(self.request_timeout):
                 response = await self.session.post(url=FYTA_AUTH_URL, auth=BasicAuth(self.email, self.password), json=payload)
 
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as exception:
+            _LOGGER.exception("timeout error")
             msg = "Timeout occurred while connecting to Fyta-server"
-            _LOGGER.exception(msg)
+            raise FytaConnectionError(msg) from exception
+
 
         json_response = await response.json()
 
         if json_response == '{"statusCode":404,"error":"Not Found"}':
             _LOGGER.exception("Authentication failed")
-            raise ConfigEntryAuthFailed
+            raise FytaAuthentificationError
+        elif json_response == '{"statusCode":401,"error":"Unauthorized","errors":[{"message":"Could not authenticate user"}]}':
+            raise FytaPasswordError
 
         self.access_token = json_response["access_token"]
         self.refresh_token = json_response["refresh_token"]
@@ -80,7 +95,7 @@ class Client:
         return {"access_token": self.access_token, "expiration": self.expiration}
 
     async def get_plants(self) -> dict:
-        """Get a list of all available plants from FYTA."""
+        """Get a list of all available plants from .fyta."""
 
         if self.session is None:
             self.session = ClientSession()
@@ -99,9 +114,20 @@ class Client:
                 response = await self.session.get(url=FYTA_PLANT_URL, headers = header)
         except asyncio.TimeoutError as exception:
             msg = "Timeout occurred while connecting to Fyta-server"
-            raise HomeassistantAnalyticsConnectionError(msg) from exception
+            raise FytaConnectionError(msg) from exception
+
+        content_type = response.headers.get("Content-Type", "")
+
+        if content_type.count("text/html") > 0:
+            text = await response.text()
+            raise FytaPlantError(
+                msg,
+                {"Content-Type": content_type, "response": text},
+            )
 
         json_response = await response.json()
+
+
 
         plant_list = json_response["plants"]
 
@@ -113,7 +139,6 @@ class Client:
 
     async def get_plant_data(self, plant_id: int) -> dict:
         """Get information about a specific plant."""
-
 
         if self.session is None:
             self.session = ClientSession()
@@ -134,7 +159,16 @@ class Client:
                 response = await self.session.get(url=url, headers = header)
         except asyncio.TimeoutError as exception:
             msg = "Timeout occurred while connecting to Fyta-server"
-            raise HomeassistantAnalyticsConnectionError(msg) from exception
+            raise FytaConnectionError(msg) from exception
+
+        content_type = response.headers.get("Content-Type", "")
+
+        if content_type.count("text/html") > 0:
+            text = await response.text()
+            raise FytaPlantError(
+                msg,
+                {"Content-Type": content_type, "response": text},
+            )
 
         plant = await response.json()
 

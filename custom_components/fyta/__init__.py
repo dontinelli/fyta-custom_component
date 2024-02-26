@@ -1,6 +1,15 @@
 """Initialization of FYTA integration."""
 from __future__ import annotations
 
+from .fyta_connector import FytaConnector
+from .fyta_exceptions import (
+    FytaError,
+    FytaConnectionError,
+    FytaAuthentificationError,
+    FytaPasswordError,
+    FytaPlantError,
+    )
+
 import logging
 from datetime import datetime
 
@@ -10,7 +19,6 @@ from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 from .coordinator import FytaCoordinator
-from .fyta_connector import FytaConnector
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -41,15 +49,9 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     if access_token == "" or expiration < datetime.now():
         await fyta.login()
 
-
     await coordinator._async_update_data()
-
     await coordinator.async_config_entry_first_refresh()
-
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
-
-    _LOGGER.info("Fyta Integration Setup Completed")
-
     return True
 
 async def async_remove_config_entry_device(hass, config_entry, device_entry) -> bool:
