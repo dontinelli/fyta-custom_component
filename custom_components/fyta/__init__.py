@@ -2,13 +2,6 @@
 from __future__ import annotations
 
 from .fyta_connector import FytaConnector
-from .fyta_exceptions import (
-    FytaError,
-    FytaConnectionError,
-    FytaAuthentificationError,
-    FytaPasswordError,
-    FytaPlantError,
-    )
 
 import logging
 from datetime import datetime

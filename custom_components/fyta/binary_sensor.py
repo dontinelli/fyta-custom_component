@@ -46,7 +46,7 @@ async def async_setup_entry(
         ]
     )
 
-    for plant_id in coordinator.plant_list.keys():
+    for plant_id in coordinator.plant_list:
         async_add_entities(
             [
                 FytaBinarySensor(coordinator, entry, sensor, plant_id)

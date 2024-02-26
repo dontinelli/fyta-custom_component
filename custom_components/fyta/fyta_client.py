@@ -4,10 +4,6 @@
 
 from __future__ import annotations
 
-from datetime import datetime, timedelta
-import logging
-import requests
-
 import asyncio
 import logging
 from datetime import datetime, timedelta
@@ -15,12 +11,11 @@ from datetime import datetime, timedelta
 from aiohttp import BasicAuth, ClientSession
 
 from .fyta_exceptions import (
-    FytaError,
     FytaConnectionError,
     FytaAuthentificationError,
     FytaPasswordError,
     FytaPlantError,
-    )
+)
 
 FYTA_AUTH_URL = 'https://web.fyta.de/api/auth/login'
 FYTA_PLANT_URL = 'https://web.fyta.de/api/user-plant'

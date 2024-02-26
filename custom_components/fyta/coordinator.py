@@ -1,15 +1,9 @@
 """Coordinator for FYTA integration."""
 
-import async_timeout
-from datetime import datetime, timedelta
 from .fyta_connector import FytaConnector
 import logging
 from datetime import datetime, timedelta
-
 from homeassistant.components.sensor import SensorEntityDescription
-
-from homeassistant.components.binary_sensor import BinarySensorEntity
-from homeassistant.components.sensor import SensorEntity, SensorEntityDescription
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
