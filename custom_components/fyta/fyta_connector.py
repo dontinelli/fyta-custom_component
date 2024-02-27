@@ -2,7 +2,7 @@
 from datetime import datetime
 import pytz
 
-from .fyta_client import Client
+from fyta_cli.fyta_client import Client
 from .utils import safe_get
 
 PLANT_STATUS = {
