@@ -1,7 +1,7 @@
 """Initialization of FYTA integration."""
 from __future__ import annotations
 
-from .fyta_connector import FytaConnector
+from fyta_cli.fyta_connector import FytaConnector
 
 import logging
 from datetime import datetime
