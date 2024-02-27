@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 import logging
-from .fyta_exceptions import (
+from fyta_cli.fyta_exceptions import (
     FytaConnectionError,
     FytaAuthentificationError,
     FytaPasswordError,
