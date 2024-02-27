@@ -17,7 +17,7 @@ from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 
-from .fyta_connector import FytaConnector
+from fyta_cli.fyta_connector import FytaConnector
 
 
 _LOGGER = logging.getLogger(__name__)
