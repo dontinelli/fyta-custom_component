@@ -1,6 +1,6 @@
 """Coordinator for FYTA integration."""
 
-from .fyta_connector import FytaConnector
+from fyta_cli.fyta_connector import FytaConnector
 import logging
 from datetime import datetime, timedelta
 from homeassistant.components.sensor import SensorEntityDescription
