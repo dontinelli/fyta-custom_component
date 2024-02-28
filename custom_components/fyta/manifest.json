@@ -1,13 +1,17 @@
 {
   "domain": "fyta",
   "name": "FYTA",
-  "codeowners": ["@dontinelli"],
+  "codeowners": [
+    "@dontinelli"
+  ],
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://www.home-assistant.io/integrations/fyta",
   "homekit": {},
   "iot_class": "cloud_polling",
-  "requirements": [],
+  "requirements": [
+    "fyta_cli==0.2.3"
+  ],
   "ssdp": [],
   "version": "0.1.0",
   "zeroconf": []
