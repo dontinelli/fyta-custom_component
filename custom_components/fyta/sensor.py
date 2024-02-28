@@ -14,17 +14,14 @@ from homeassistant.components.sensor import (
 )
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import (
-    PERCENTAGE,
     EntityCategory,
-    UnitOfInformation,
-    UnitOfTime,
 )
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.util.dt import utc_from_timestamp
 
 from .const import DOMAIN
 from .coordinator import FytaCoordinator, FytaEntity
+
 
 @dataclass
 class FytaSensorEntityDescription(SensorEntityDescription):
@@ -150,7 +147,7 @@ async def async_setup_entry(
         ]
     )
 
-    for plant_id in coordinator.plant_list.keys():
+    for plant_id in coordinator.plant_list:
         async_add_entities(
             [
                 FytaSensor(coordinator, entry, sensor, plant_id)

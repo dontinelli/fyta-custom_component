@@ -2,24 +2,22 @@
 from __future__ import annotations
 
 import logging
-from fyta_exceptions import (
-    FytaError,
+from fyta_cli.fyta_exceptions import (
     FytaConnectionError,
     FytaAuthentificationError,
     FytaPasswordError,
-    FytaPlantError,
-    )
+)
 from typing import Any
 
 import voluptuous as vol
 
 from homeassistant import config_entries, exceptions
 from homeassistant.const import CONF_USERNAME, CONF_PASSWORD
-from homeassistant.core import HomeAssistant, callback
+from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
 
-from fyta_connector import FytaConnector
+from fyta_cli.fyta_connector import FytaConnector
 
 
 _LOGGER = logging.getLogger(__name__)
@@ -28,9 +26,9 @@ DATA_SCHEMA = vol.Schema({vol.Required(CONF_USERNAME): str, vol.Required(CONF_PA
 
 
 async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
-
-    access_token = (data["access_token"] if "access_token" in data else "")
-    expiration = (data["expiration"] if "expiration" in data else "")
+    """Validate the user input allows us to connect."""
+    access_token = data.get("access_token", "")
+    expiration = data.get("expiration", "")
 
     fyta = FytaConnector(data[CONF_USERNAME], data[CONF_PASSWORD], access_token, expiration)
 
@@ -51,7 +49,7 @@ async def validate_input(hass: HomeAssistant, data: dict) -> dict[str, Any]:
 
 
 class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a config flow for Fyta"""
+    """Handle a config flow for Fyta."""
 
     VERSION = 1
 
