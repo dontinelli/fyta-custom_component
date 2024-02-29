@@ -1,6 +1,8 @@
 """Config flow for FYTA integration."""
 from __future__ import annotations
 
+from collections.abc import Mapping
+from datetime import datetime
 import logging
 from typing import Any
 
@@ -86,16 +88,18 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             try:
                 credentials = await fyta.login()
                 await fyta.client.close()
-            except CannotConnect:
+            except FytaConnectionError:
                 errors["base"] = "cannot_connect"
-            except InvalidAuth:
+            except FytaAuthentificationError:
                 errors["base"] = "invalid_auth"
-                errors[CONF_USERNAME] = "auth_error"
-                errors[CONF_PASSWORD] = "auth_error"
-            except InvalidPassword:
+            except FytaPasswordError:
                 errors["base"] = "invalid_auth"
                 errors[CONF_PASSWORD] = "password_error"
+            except Exception:  # pylint: disable=broad-except
+                errors["base"] = "unknown"
             else:
+                user_input |= credentials
+
                 self.hass.config_entries.async_update_entry(
                     self._entry,
                     data={**self._entry.data, **user_input},
