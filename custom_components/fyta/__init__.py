@@ -1,13 +1,14 @@
 """Initialization of FYTA integration."""
 from __future__ import annotations
 
+from datetime import datetime
+import logging
+from zoneinfo import ZoneInfo
+
 from fyta_cli.fyta_connector import FytaConnector
 
-import logging
-from datetime import datetime
-
 from homeassistant.config_entries import ConfigEntry
-from homeassistant.const import CONF_USERNAME, CONF_PASSWORD, Platform
+from homeassistant.const import CONF_PASSWORD, CONF_USERNAME, Platform
 from homeassistant.core import HomeAssistant
 
 from .const import DOMAIN
@@ -15,7 +16,11 @@ from .coordinator import FytaCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-PLATFORMS = (Platform.SENSOR, Platform.BINARY_SENSOR)
+PLATFORMS = [
+    Platform.SENSOR,
+    Platform.BINARY_SENSOR
+]
+
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up the FYTA integration.
@@ -27,25 +32,25 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     Returns: bool:
 
     """
-    #_LOGGER.exception(f"async_setup_entry {entry.entry_id}")
-    username = entry.data[CONF_USERNAME]
-    password = entry.data[CONF_PASSWORD]
-    access_token = entry.data.get("access_token", "")
-    expiration = (entry.data["expiration"] if "expiration" in entry.data else datetime.now())
+    tz: str = hass.config.time_zone
 
-    fyta = FytaConnector(username, password, access_token, expiration)
+    username: str = entry.data[CONF_USERNAME]
+    password: str = entry.data[CONF_PASSWORD]
+    access_token: str = entry.data.get("access_token", "")
+    expiration: datetime | None = (datetime.fromisoformat(entry.data["expiration"]).astimezone(ZoneInfo(tz)) if "expiration" in entry.data else None)
 
-    coordinator = FytaCoordinator(hass, fyta, entry)
+    fyta = FytaConnector(username, password, access_token, expiration, tz)
+
+    coordinator = FytaCoordinator(hass, fyta)
+
+    await coordinator.async_config_entry_first_refresh()
 
     hass.data.setdefault(DOMAIN, {})[entry.entry_id] = coordinator
 
-    if access_token == "" or expiration < datetime.now():
-        await fyta.login()
-
-    await coordinator._async_update_data()
-    await coordinator.async_config_entry_first_refresh()
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+
     return True
+
 
 async def async_remove_config_entry_device(hass, config_entry, device_entry) -> bool:
     """Delete device if no entities."""
@@ -57,8 +62,10 @@ async def async_remove_config_entry_device(hass, config_entry, device_entry) -> 
         return False
     return True
 
+
 async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
-    """Unload a config entry from Home Assistant."""
+    """Unload Fyta entity."""
+
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
         hass.data[DOMAIN].pop(entry.entry_id)
