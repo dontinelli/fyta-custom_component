@@ -7,12 +7,10 @@
   "config_flow": true,
   "dependencies": [],
   "documentation": "https://www.home-assistant.io/integrations/fyta",
-  "homekit": {},
   "iot_class": "cloud_polling",
+  "issue_tracker": "https://github.com/dontinelli/fyta-custom_component/issues",
   "requirements": [
     "fyta_cli==0.3.1"
   ],
-  "ssdp": [],
   "version": "0.1.0",
-  "zeroconf": []
 }
