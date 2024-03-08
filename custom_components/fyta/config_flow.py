@@ -16,7 +16,6 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN
 
@@ -47,7 +46,6 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             try:
                 credentials = await fyta.login()
-                await fyta.client.close()
             except FytaConnectionError:
                 errors["base"] = "cannot_connect"
             except FytaAuthentificationError:
@@ -63,6 +61,9 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 return self.async_create_entry(
                     title=user_input[CONF_USERNAME], data=user_input
                 )
+
+            finally:
+                await fyta.client.close()
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
