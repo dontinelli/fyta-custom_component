@@ -1,9 +1,9 @@
 # Fyta - custom_component
 
-This repository contains a custom integration for Home Assistant to monitor FYTA-plants. The integration may eventually be implemented as core integration. Until then (or for easier adjustments to your desires), feel free to use this custom component.
+This repository contains a custom integration for Home Assistant to monitor FYTA plants. The integration may eventually be implemented as core integration. Until then (or for easier adjustments to your desires), feel free to use this custom component.
 
 # Installation
-Copy the files to ./config/custom_components/fyta of your Home Assistant installation.
+Copy the files from custom_components/fyta to ./config/custom_components/fyta of your Home Assistant installation.
 
 To access your plant data, you need the username (email address) and password of your FYTA account. The data will be accuired by the integration in course of the UI setup procedure.
 
