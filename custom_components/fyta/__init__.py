@@ -18,7 +18,8 @@ _LOGGER = logging.getLogger(__name__)
 
 PLATFORMS = [
     Platform.SENSOR,
-    Platform.BINARY_SENSOR
+    Platform.BINARY_SENSOR,
+    Platform.IMAGE
 ]
 
 
@@ -37,7 +38,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     username: str = entry.data[CONF_USERNAME]
     password: str = entry.data[CONF_PASSWORD]
     access_token: str = entry.data.get("access_token", "")
-    expiration: datetime | None = (datetime.fromisoformat(entry.data["expiration"]).astimezone(ZoneInfo(tz)) if "expiration" in entry.data else None)
+    expiration: datetime | None = (datetime.fromisoformat(entry.data.get("expiration")).astimezone(ZoneInfo(tz)) if "expiration" in entry.data else None)
 
     fyta = FytaConnector(username, password, access_token, expiration, tz)
 

@@ -16,7 +16,6 @@ import voluptuous as vol
 
 from homeassistant import config_entries
 from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
-from homeassistant.data_entry_flow import FlowResult
 
 from .const import DOMAIN
 
@@ -35,7 +34,7 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> config_entries.ConfigFlowResult:
         """Handle the initial step."""
 
         errors = {}
@@ -47,7 +46,6 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
             try:
                 credentials = await fyta.login()
-                await fyta.client.close()
             except FytaConnectionError:
                 errors["base"] = "cannot_connect"
             except FytaAuthentificationError:
@@ -64,18 +62,21 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     title=user_input[CONF_USERNAME], data=user_input
                 )
 
+            finally:
+                await fyta.client.close()
+
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
         )
 
-    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> FlowResult:
+    async def async_step_reauth(self, entry_data: Mapping[str, Any]) -> config_entries.ConfigFlowResult:
         """Handle flow upon an API authentication error."""
         self._entry = self.hass.config_entries.async_get_entry(self.context["entry_id"])
         return await self.async_step_reauth_confirm()
 
     async def async_step_reauth_confirm(
         self, user_input: dict[str, Any] | None = None
-    ) -> FlowResult:
+    ) -> config_entries.ConfigFlowResult:
         """Handle reauthorization flow."""
         errors = {}
         assert self._entry is not None
