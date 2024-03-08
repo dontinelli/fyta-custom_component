@@ -4,7 +4,6 @@ from __future__ import annotations
 from collections.abc import Callable
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Final
 
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
@@ -23,6 +22,7 @@ class FytaImageEntityDescription(ImageEntityDescription):
     value_fn: Callable[[str | int | float | datetime], str | int | float | datetime] = (
         lambda value: value
     )
+
 
 async def async_setup_entry(
     hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
@@ -52,7 +52,7 @@ class FytaPlantImageEntity(FytaPlantEntity, ImageEntity):
         self,
         coordinator: FytaCoordinator,
         entry: ConfigEntry,
-        description: SensorEntityDescription,
+        description: FytaImageEntityDescription,
         plant_id: int,
     ) -> None:
         """Initiatlize UniFi Image entity."""
