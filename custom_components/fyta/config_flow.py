@@ -58,7 +58,7 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 if isinstance(credentials["expiration"], datetime):
                     credentials["expiration"] = credentials["expiration"].isoformat()
-                    
+
                 user_input |= credentials
 
                 return self.async_create_entry(
