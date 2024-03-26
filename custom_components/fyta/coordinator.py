@@ -9,6 +9,7 @@ from fyta_cli.fyta_exceptions import (
     FytaAuthentificationError,
     FytaConnectionError,
     FytaPasswordError,
+    FytaPlantError,
 )
 
 from homeassistant.config_entries import ConfigEntry
@@ -43,13 +44,17 @@ class FytaCoordinator(DataUpdateCoordinator[dict[int, dict[str, Any]]]):
         if self.fyta.expiration is None or self.fyta.expiration.timestamp() < datetime.now().timestamp():
             await self.renew_authentication()
 
-        data = await self.fyta.update_all_plants()
+        try:
+            data = await self.fyta.update_all_plants()
+        except (FytaConnectionError, FytaPlantError) as err:
+            raise DataUpdateCoordinator.UpdateFailed(err) from err
+
         data |= {"online": True}
         data |= {"plant_number": len(self.fyta.plant_list)}
 
         self._attr_last_update_success = datetime.now()
 
-        _LOGGER.debug("Data successfully updated.")
+        _LOGGER.debug("Data successfully updated")
 
         return data
 
