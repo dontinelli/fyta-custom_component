@@ -75,7 +75,7 @@ class FytaPlantEntity(CoordinatorEntity[FytaCoordinator]):
         if self.entity_description.key.count("status") > 0:
             #FYTA status scale is 1 to 5, set unavailable if different status is reported
             value = self.plant[self.entity_description.key]
+            print(value)
             if value is None or value < 1 or value > 5:
                 return False
-        else:
-            return super().available
+        return super().available
