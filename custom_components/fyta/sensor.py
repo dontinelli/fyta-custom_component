@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from datetime import datetime
 from typing import Final
 
-from fyta_cli.fyta_connector import PLANT_STATUS
+from fyta_cli.fyta_connector import PLANT_STATUS, PLANT_MEASUREMENT_STATUS
 
 from homeassistant.components.sensor import (
     SensorDeviceClass,
@@ -33,8 +33,8 @@ class FytaSensorEntityDescription(SensorEntityDescription):
         lambda value: value
     )
 
-
-PLANT_STATUS_LIST: list[str] = ["too_low", "low", "perfect", "high", "too_high"]
+PLANT_STATUS_LIST: list[str] = ["deleted", "doing_great", "need_attention", "need_help"]
+PLANT_MEASUREMENT_STATUS_LIST: list[str] = ["too_low", "low", "perfect", "high", "too_high"]
 
 SENSORS: Final[list[FytaSensorEntityDescription]] = [
     FytaSensorEntityDescription(
@@ -56,29 +56,29 @@ SENSORS: Final[list[FytaSensorEntityDescription]] = [
         key="temperature_status",
         translation_key="temperature_status",
         device_class=SensorDeviceClass.ENUM,
-        options=PLANT_STATUS_LIST,
-        value_fn=lambda value: PLANT_STATUS[value],
+        options=PLANT_MEASUREMENT_STATUS_LIST,
+        value_fn=lambda value: PLANT_MEASUREMENT_STATUS[value],
     ),
     FytaSensorEntityDescription(
         key="light_status",
         translation_key="light_status",
         device_class=SensorDeviceClass.ENUM,
-        options=PLANT_STATUS_LIST,
-        value_fn=lambda value: PLANT_STATUS[value],
+        options=PLANT_MEASUREMENT_STATUS_LIST,
+        value_fn=lambda value: PLANT_MEASUREMENT_STATUS[value],
     ),
     FytaSensorEntityDescription(
         key="moisture_status",
         translation_key="moisture_status",
         device_class=SensorDeviceClass.ENUM,
-        options=PLANT_STATUS_LIST,
-        value_fn=lambda value: PLANT_STATUS[value],
+        options=PLANT_MEASUREMENT_STATUS_LIST,
+        value_fn=lambda value: PLANT_MEASUREMENT_STATUS[value],
     ),
     FytaSensorEntityDescription(
         key="salinity_status",
         translation_key="salinity_status",
         device_class=SensorDeviceClass.ENUM,
-        options=PLANT_STATUS_LIST,
-        value_fn=lambda value: PLANT_STATUS[value],
+        options=PLANT_MEASUREMENT_STATUS_LIST,
+        value_fn=lambda value: PLANT_MEASUREMENT_STATUS[value],
     ),
     FytaSensorEntityDescription(
         key="temperature",
