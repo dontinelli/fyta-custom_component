@@ -1,0 +1,123 @@
+{
+    "config": {
+        "abort": {
+            "already_configured": "Gerät ist bereits konfiguriert",
+            "cannot_connect": "Keine Verbindung zum FYTA-Server",
+            "unknown": "Unbekannter Fehler aufgetreten"
+        },
+        "error": {
+            "cannot_connect": "Keine Verbindung",
+            "invalid_auth": "Anmeldung fehlgeschlagen",
+            "password_error": "Fehlerhaftes Password",
+            "unknown": "Unbekannter Fehler"
+        },
+        "step": {
+            "user": {
+                "data": {
+                    "password": "Passwort",
+                    "username": "Benutzername"
+                },
+                "description": "Gibt Benutzernamen und Passwort für den FYTA-Server an",
+                "title": "Zugangsdaten für FYTA API"
+            },
+            "reauth_confirm": {
+                "description": "Aktualisieren der Zugangsdaten für FYTA API",
+                "data": {
+                    "password": "Passwort",
+                    "username": "Benutzername"
+                }
+            }
+        }
+    },
+    "entity": {
+        "binary_sensor": {
+            "fyta_battery_status": {
+                "name": "Batteriestatus"
+            },
+            "fyta_online": {
+                "name": "Online"
+            }
+        },
+        "sensor": {
+            "fyta_battery_level": {
+                "name": "Batterielevel"
+            },
+            "fyta_last_updated": {
+                "name": "Zuletzt aktualisiert"
+            },
+            "fyta_light": {
+                "name": "Licht"
+            },
+            "fyta_light_status": {
+                "name": "Lichtstatus",
+                "state": {
+                    "1": "Zu tief",
+                    "2": "Tief",
+                    "3": "Perfekt",
+                    "4": "Hoch",
+                    "5": "Zu hoch"
+                }
+            },
+            "fyta_moisture": {
+                "name": "Feuchtigkeit"
+            },
+            "fyta_moisture_status": {
+                "name": "Feuchtigkeitsstatus",
+                "state": {
+                    "1": "Zu tief",
+                    "2": "Tief",
+                    "3": "Perfekt",
+                    "4": "Hoch",
+                    "5": "Zu hoch"
+                }
+            },
+            "fyta_ph": {
+                "name": "pH"
+            },
+            "fyta_plant_name": {
+                "name": "Pflanzenname"
+            },
+            "fyta_plant_number": {
+                "name": "Anzahl Pflanzen"
+            },
+            "fyta_plant_status": {
+                "name": "Status",
+                "state": {
+                    "0": "Deleted",
+                    "1": "Doing great",
+                    "2": "Needs Attention",
+                    "3": "Needs Help"
+                }
+            },
+            "fyta_salinity": {
+                "name": "Düngung"
+            },
+            "fyta_salinity_status": {
+                "name": "Düngestatus",
+                "state": {
+                    "1": "Zu tief",
+                    "2": "Tief",
+                    "3": "Perfekt",
+                    "4": "Hoch",
+                    "5": "Zu hoch"
+                }
+            },
+            "fyta_scientific_name": {
+                "name": "Wissenschaftlicher Name"
+            },
+            "fyta_temperature": {
+                "name": "Temperatur"
+            },
+            "fyta_temperature_status": {
+                "name": "Temperaturstatus",
+                "state": {
+                    "1": "Zu tief",
+                    "2": "Tief",
+                    "3": "Perfekt",
+                    "4": "Hoch",
+                    "5": "Zu hoch"
+                }
+            }
+        }
+    }
+}
