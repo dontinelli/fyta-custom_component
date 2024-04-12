@@ -51,11 +51,11 @@
             "fyta_light_status": {
                 "name": "Lichtstatus",
                 "state": {
-                    "1": "Zu tief",
-                    "2": "Tief",
-                    "3": "Perfekt",
-                    "4": "Hoch",
-                    "5": "Zu hoch"
+                    "too_low": "Zu tief",
+                    "low": "Tief",
+                    "perfect": "Perfekt",
+                    "high": "Hoch",
+                    "too_high": "Zu hoch"
                 }
             },
             "fyta_moisture": {
@@ -64,11 +64,11 @@
             "fyta_moisture_status": {
                 "name": "Feuchtigkeitsstatus",
                 "state": {
-                    "1": "Zu tief",
-                    "2": "Tief",
-                    "3": "Perfekt",
-                    "4": "Hoch",
-                    "5": "Zu hoch"
+                    "too_low": "Zu tief",
+                    "low": "Tief",
+                    "perfect": "Perfekt",
+                    "high": "Hoch",
+                    "too_high": "Zu hoch"
                 }
             },
             "fyta_ph": {
@@ -83,10 +83,10 @@
             "fyta_plant_status": {
                 "name": "Status",
                 "state": {
-                    "0": "Deleted",
-                    "1": "Doing great",
-                    "2": "Needs Attention",
-                    "3": "Needs Help"
+                    "deleted": "Gelöscht",
+                    "doing_great": "Prima",
+                    "need_attention": "Benötige Aufmerksamkeit",
+                    "need_help": "Benötige Hilfe"
                 }
             },
             "fyta_salinity": {
@@ -95,11 +95,11 @@
             "fyta_salinity_status": {
                 "name": "Düngestatus",
                 "state": {
-                    "1": "Zu tief",
-                    "2": "Tief",
-                    "3": "Perfekt",
-                    "4": "Hoch",
-                    "5": "Zu hoch"
+                    "too_low": "Zu tief",
+                    "low": "Tief",
+                    "perfect": "Perfekt",
+                    "high": "Hoch",
+                    "too_high": "Zu hoch"
                 }
             },
             "fyta_scientific_name": {
@@ -111,11 +111,11 @@
             "fyta_temperature_status": {
                 "name": "Temperaturstatus",
                 "state": {
-                    "1": "Zu tief",
-                    "2": "Tief",
-                    "3": "Perfekt",
-                    "4": "Hoch",
-                    "5": "Zu hoch"
+                    "too_low": "Zu tief",
+                    "low": "Tief",
+                    "perfect": "Perfekt",
+                    "high": "Hoch",
+                    "too_high": "Zu hoch"
                 }
             }
         }

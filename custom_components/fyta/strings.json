@@ -41,8 +41,8 @@
         "state": {
           "deleted": "Deleted",
           "doing_great": "Doing great",
-          "needs_attention": "Needs attention",
-          "needs_help": "Needs help"
+          "need_attention": "Needs attention",
+          "need_help": "Needs help"
         }
       },
       "temperature_status": {
