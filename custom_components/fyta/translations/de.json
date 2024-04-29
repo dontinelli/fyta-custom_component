@@ -51,6 +51,7 @@
             "fyta_light_status": {
                 "name": "Lichtstatus",
                 "state": {
+                    "no_data": "Keine Daten",
                     "too_low": "Zu tief",
                     "low": "Tief",
                     "perfect": "Perfekt",
@@ -64,6 +65,7 @@
             "fyta_moisture_status": {
                 "name": "Feuchtigkeitsstatus",
                 "state": {
+                    "no_data": "Keine Daten",
                     "too_low": "Zu tief",
                     "low": "Tief",
                     "perfect": "Perfekt",
@@ -86,7 +88,7 @@
                     "deleted": "Gelöscht",
                     "doing_great": "Prima",
                     "need_attention": "Benötige Aufmerksamkeit",
-                    "need_help": "Benötige Hilfe"
+                    "no_sensor": "Kein Sensor"
                 }
             },
             "fyta_salinity": {
@@ -95,6 +97,7 @@
             "fyta_salinity_status": {
                 "name": "Düngestatus",
                 "state": {
+                    "no_data": "Keine Daten",
                     "too_low": "Zu tief",
                     "low": "Tief",
                     "perfect": "Perfekt",
@@ -111,6 +114,7 @@
             "fyta_temperature_status": {
                 "name": "Temperaturstatus",
                 "state": {
+                    "no_data": "Keine Daten",
                     "too_low": "Zu tief",
                     "low": "Tief",
                     "perfect": "Perfekt",

@@ -72,7 +72,7 @@ class FytaCoordinator(DataUpdateCoordinator[dict[int, dict[str, Any]]]):
         new_config_entry["access_token"] = credentials.get("access_token")
         new_config_entry["expiration"] = credentials.get("expiration")
 
-        self.hass.config_entries.async_update_entry(self.config_entry, data=new_config_entry)
+        await self.hass.config_entries.async_update_entry(self.config_entry, data=new_config_entry)
 
         _LOGGER.info("Credentials successfully updated")
 
