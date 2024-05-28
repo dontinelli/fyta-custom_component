@@ -15,7 +15,10 @@ from fyta_cli.fyta_exceptions import (
 from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.exceptions import ConfigEntryAuthFailed, ConfigEntryNotReady
-from homeassistant.helpers.update_coordinator import DataUpdateCoordinator
+from homeassistant.helpers.update_coordinator import (
+    DataUpdateCoordinator,
+    UpdateFailed,
+)
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -47,7 +50,7 @@ class FytaCoordinator(DataUpdateCoordinator[dict[int, dict[str, Any]]]):
         try:
             data = await self.fyta.update_all_plants()
         except (FytaConnectionError, FytaPlantError) as err:
-            raise DataUpdateCoordinator.UpdateFailed(err) from err
+            raise UpdateFailed(err) from err
 
         data |= {"online": True}
         data |= {"plant_number": len(self.fyta.plant_list)}

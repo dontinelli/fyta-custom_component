@@ -19,6 +19,9 @@
       "light": {
         "default": "mdi:weather-sunny"
       },
+      "light_dli": {
+        "default": "mdi:weather-sunny"
+      },      
       "salinity": {
         "default": "mdi:sprout-outline"
       },
