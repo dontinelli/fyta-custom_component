@@ -31,24 +31,27 @@
     },
     "entity": {
         "binary_sensor": {
-            "fyta_battery_status": {
+            "battery_status": {
                 "name": "Battery status"
             },
-            "fyta_online": {
+            "online": {
                 "name": "Online"
             }
         },
         "sensor": {
-            "fyta_battery_level": {
+            "battery_level": {
                 "name": "Battery level"
             },
-            "fyta_last_updated": {
+            "last_updated": {
                 "name": "Last updated"
             },
-            "fyta_light": {
+            "light": {
                 "name": "Light"
             },
-            "fyta_light_status": {
+            "light_dli": {
+                "name": "Light (DLI)"
+            },            
+            "light_status": {
                 "name": "Light state",
                 "state": {
                     "no_data": "No Data",
@@ -59,10 +62,10 @@
                     "too_high": "Too high"
                 }
             },
-            "fyta_moisture": {
+            "moisture": {
                 "name": "Moisture"
             },
-            "fyta_moisture_status": {
+            "moisture_status": {
                 "name": "Moisture state",
                 "state": {
                     "no_data": "No Data",
@@ -73,16 +76,16 @@
                     "too_high": "Too high"
                 }
             },
-            "fyta_ph": {
+            "ph": {
                 "name": "pH"
             },
-            "fyta_plant_name": {
+            "plant_name": {
                 "name": "Plant name"
             },
-            "fyta_plant_number": {
+            "plant_number": {
                 "name": "Number of plants"
             },
-            "fyta_plant_status": {
+            "plant_status": {
                 "name": "State",
                 "state": {
                     "deleted": "Deleted",
@@ -91,10 +94,10 @@
                     "no_sensor": "No Sensor"
                 }
             },
-            "fyta_salinity": {
+            "salinity": {
                 "name": "Salinity"
             },
-            "fyta_salinity_status": {
+            "salinity_status": {
                 "name": "Salinity state",
                 "state": {
                     "no_data": "No Data",
@@ -105,13 +108,13 @@
                     "too_high": "Too high"
                 }
             },
-            "fyta_scientific_name": {
+            "scientific_name": {
                 "name": "Scientific name"
             },
-            "fyta_temperature": {
+            "temperature": {
                 "name": "Temperature"
             },
-            "fyta_temperature_status": {
+            "temperature_status": {
                 "name": "Temperature state",
                 "state": {
                     "no_data": "No Data",

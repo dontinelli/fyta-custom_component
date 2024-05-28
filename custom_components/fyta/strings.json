@@ -92,6 +92,9 @@
       "light": {
         "name": "Light"
       },
+      "light_dli": {
+        "name": "Light (DLI)"
+      },      
       "salinity": {
         "name": "Salinity"
       },
