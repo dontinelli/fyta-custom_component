@@ -7,13 +7,11 @@ from homeassistant.components.binary_sensor import (
     BinarySensorEntity,
     BinarySensorEntityDescription,
 )
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.const import EntityCategory
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
-from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
-from .const import DOMAIN
+from . import FytaConfigEntry
 from .coordinator import FytaCoordinator
 from .entity import FytaCoordinatorEntity, FytaPlantEntity
 
@@ -34,12 +32,12 @@ BINARY_SENSORS: Final[list[BinarySensorEntityDescription]] = [
 
 
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: FytaConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up the Nextcloud binary sensors."""
-    coordinator: FytaCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: FytaCoordinator = entry.runtime_data
 
-    plant_entities: list[CoordinatorEntity] = [
+    plant_entities = [
         FytaCoordinatorBinarySensor(coordinator, entry, sensor)
         for sensor in BINARY_SENSORS
         if sensor.key in coordinator.data
@@ -49,7 +47,7 @@ async def async_setup_entry(
         FytaPlantBinarySensor(coordinator, entry, sensor, plant_id)
         for plant_id in coordinator.fyta.plant_list
         for sensor in BINARY_SENSORS
-        if sensor.key in coordinator.data[plant_id]
+        if sensor.key in dir(coordinator.data[plant_id])
     )
 
     async_add_entities(plant_entities)
@@ -75,5 +73,5 @@ class FytaPlantBinarySensor(FytaPlantEntity, BinarySensorEntity):
     @property
     def is_on(self) -> bool:
         """Return true if the binary sensor is on."""
-        val = self.plant[self.entity_description.key]
+        val = getattr(self.plant, self.entity_description.key)
         return val is True or val == "yes"

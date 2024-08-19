@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from datetime import datetime
 import logging
 from typing import Any
 
@@ -12,61 +11,86 @@ from fyta_cli.fyta_exceptions import (
     FytaConnectionError,
     FytaPasswordError,
 )
+from fyta_cli.fyta_models import Credentials
 import voluptuous as vol
 
 from homeassistant import config_entries
-from homeassistant.const import CONF_PASSWORD, CONF_USERNAME
+from homeassistant.config_entries import ConfigFlowResult
+from homeassistant.const import CONF_ACCESS_TOKEN, CONF_PASSWORD, CONF_USERNAME
+from homeassistant.helpers.selector import (
+    TextSelector,
+    TextSelectorConfig,
+    TextSelectorType,
+)
 
-from .const import DOMAIN
+from . import FytaConfigEntry
+from .const import CONF_EXPIRATION, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
 
 DATA_SCHEMA = vol.Schema(
-    {vol.Required(CONF_USERNAME): str, vol.Required(CONF_PASSWORD): str}
+    {
+        vol.Required(CONF_USERNAME): TextSelector(
+            TextSelectorConfig(
+                type=TextSelectorType.TEXT,
+                autocomplete="username",
+            ),
+        ),
+        vol.Required(CONF_PASSWORD): TextSelector(
+            TextSelectorConfig(
+                type=TextSelectorType.PASSWORD,
+                autocomplete="current-password",
+            ),
+        ),
+    }
 )
 
 
 class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a config flow for Fyta."""
 
+    credentials: Credentials
+    _entry: FytaConfigEntry | None = None
     VERSION = 1
+    MINOR_VERSION = 2
+
+    async def async_auth(self, user_input: Mapping[str, Any]) -> dict[str, str]:
+        """Reusable Auth Helper."""
+        fyta = FytaConnector(user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
+
+        try:
+            self.credentials = await fyta.login()
+        except FytaConnectionError:
+            return {"base": "cannot_connect"}
+        except FytaAuthentificationError:
+            return {"base": "invalid_auth"}
+        except FytaPasswordError:
+            return {"base": "invalid_auth", CONF_PASSWORD: "password_error"}
+        except Exception as e:  # noqa: BLE001
+            _LOGGER.error(e)
+            return {"base": "unknown"}
+        finally:
+            await fyta.client.close()
+
+        return {}
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.ConfigFlowResult:
+    ) -> ConfigFlowResult:
         """Handle the initial step."""
-
         errors = {}
         if user_input:
             self._async_abort_entries_match({CONF_USERNAME: user_input[CONF_USERNAME]})
 
-            fyta = FytaConnector(user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
-            credentials: dict[str, str | datetime] = {}
-
-            try:
-                credentials = await fyta.login()
-            except FytaConnectionError:
-                errors["base"] = "cannot_connect"
-            except FytaAuthentificationError:
-                errors["base"] = "invalid_auth"
-            except FytaPasswordError:
-                errors["base"] = "invalid_auth"
-                errors[CONF_PASSWORD] = "password_error"
-            except Exception:  # pylint: disable=broad-except
-                errors["base"] = "unknown"
-            else:
-                if isinstance(credentials["expiration"], datetime):
-                    credentials["expiration"] = credentials["expiration"].isoformat()
-
-                user_input |= credentials
-
+            if not (errors := await self.async_auth(user_input)):
+                user_input |= {
+                    CONF_ACCESS_TOKEN: self.credentials.access_token,
+                    CONF_EXPIRATION: self.credentials.expiration.isoformat(),
+                }
                 return self.async_create_entry(
                     title=user_input[CONF_USERNAME], data=user_input
                 )
-
-            finally:
-                await fyta.client.close()
 
         return self.async_show_form(
             step_id="user", data_schema=DATA_SCHEMA, errors=errors
@@ -79,37 +103,19 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
 
     async def async_step_reauth_confirm(
         self, user_input: dict[str, Any] | None = None
-    ) -> config_entries.ConfigFlowResult:
+    ) -> ConfigFlowResult:
         """Handle reauthorization flow."""
         errors = {}
         assert self._entry is not None
 
-        if user_input:
-
-            fyta = FytaConnector(user_input[CONF_USERNAME], user_input[CONF_PASSWORD])
-            credentials: dict[str, str | datetime] = {}
-
-            try:
-                credentials = await fyta.login()
-                await fyta.client.close()
-            except FytaConnectionError:
-                errors["base"] = "cannot_connect"
-            except FytaAuthentificationError:
-                errors["base"] = "invalid_auth"
-            except FytaPasswordError:
-                errors["base"] = "invalid_auth"
-                errors[CONF_PASSWORD] = "password_error"
-            except Exception:  # pylint: disable=broad-except
-                errors["base"] = "unknown"
-            else:
-                user_input |= credentials
-
-                self.hass.config_entries.async_update_entry(
-                    self._entry,
-                    data={**self._entry.data, **user_input},
-                )
-                await self.hass.config_entries.async_reload(self._entry.entry_id)
-                return self.async_abort(reason="reauth_successful")
+        if user_input and not (errors := await self.async_auth(user_input)):
+            user_input |= {
+                CONF_ACCESS_TOKEN: self.credentials.access_token,
+                CONF_EXPIRATION: self.credentials.expiration.isoformat(),
+            }
+            return self.async_update_reload_and_abort(
+                self._entry, data={**self._entry.data, **user_input}
+            )
 
         data_schema = self.add_suggested_values_to_schema(
             DATA_SCHEMA,
@@ -118,6 +124,5 @@ class FytaConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(
             step_id="reauth_confirm",
             data_schema=data_schema,
-            description_placeholders={"FYTA username": self._entry.data[CONF_USERNAME]},
             errors=errors,
         )
