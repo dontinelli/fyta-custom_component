@@ -2,7 +2,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping
-from datetime import datetime
 import logging
 from typing import Any
 
@@ -16,6 +15,7 @@ from fyta_cli.fyta_models import Credentials
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.config_entries import ConfigFlowResult
 from homeassistant.const import CONF_ACCESS_TOKEN, CONF_PASSWORD, CONF_USERNAME
 from homeassistant.helpers.selector import (
     TextSelector,

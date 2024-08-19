@@ -1,8 +1,6 @@
 """Entity for Fyta plant image."""
 from __future__ import annotations
 
-from collections.abc import Callable
-from dataclasses import dataclass
 from datetime import datetime
 
 from homeassistant.config_entries import ConfigEntry
@@ -11,7 +9,6 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.image import ImageEntity, ImageEntityDescription
 
 from . import FytaConfigEntry
-from .const import DOMAIN
 from .coordinator import FytaCoordinator
 from .entity import FytaPlantEntity
 
@@ -38,13 +35,13 @@ async def async_setup_entry(
 class FytaPlantImageEntity(FytaPlantEntity, ImageEntity):
     """Represents a Fyta image."""
 
-    entity_description: FytaImageEntityDescription
+    entity_description: ImageEntityDescription
 
     def __init__(
         self,
         coordinator: FytaCoordinator,
         entry: ConfigEntry,
-        description: FytaImageEntityDescription,
+        description: ImageEntityDescription,
         plant_id: int,
     ) -> None:
         """Initiatlize UniFi Image entity."""
