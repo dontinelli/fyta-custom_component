@@ -10,34 +10,26 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.components.image import ImageEntity, ImageEntityDescription
 
+from . import FytaConfigEntry
 from .const import DOMAIN
 from .coordinator import FytaCoordinator
 from .entity import FytaPlantEntity
 
 
-@dataclass(frozen=True)
-class FytaImageEntityDescription(ImageEntityDescription):
-    """Describes Fyta image entity."""
-
-    value_fn: Callable[[str | int | float | datetime], str | int | float | datetime] = (
-        lambda value: value
-    )
-
-
 async def async_setup_entry(
-    hass: HomeAssistant, entry: ConfigEntry, async_add_entities: AddEntitiesCallback
+    hass: HomeAssistant, entry: FytaConfigEntry, async_add_entities: AddEntitiesCallback
 ) -> None:
     """Set up the FYTA plant images."""
-    coordinator: FytaCoordinator = hass.data[DOMAIN][entry.entry_id]
+    coordinator: FytaCoordinator = entry.runtime_data
 
-    description = FytaImageEntityDescription(
+    description = ImageEntityDescription(
         key="plant_image",
     )
 
     plant_entities: list[FytaPlantImageEntity] = [
         FytaPlantImageEntity(coordinator, entry, description, plant_id)
         for plant_id in coordinator.fyta.plant_list
-        if "plant_origin_path" in coordinator.data[plant_id]
+        if "plant_origin_path" in dir(coordinator.data[plant_id])
     ]
 
     async_add_entities(plant_entities)
@@ -62,7 +54,7 @@ class FytaPlantImageEntity(FytaPlantEntity, ImageEntity):
     @property
     def image_url(self) -> str:
         """Return the image_url for this sensor."""
-        image: str = self.plant["plant_origin_path"]
+        image: str = self.plant.plant_origin_path
         if image != self._attr_image_url:
             self._attr_image_last_updated = datetime.now()
 

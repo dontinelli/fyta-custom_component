@@ -1,14 +1,20 @@
 """Entities for FYTA integration."""
-from typing import Any
+
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
+from fyta_cli.fyta_models import Plant
 
 from homeassistant.components.sensor import SensorEntityDescription
-from homeassistant.config_entries import ConfigEntry
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
 from .coordinator import FytaCoordinator
 
+if TYPE_CHECKING:
+    from . import FytaConfigEntry
 
 class FytaCoordinatorEntity(CoordinatorEntity[FytaCoordinator]):
     """Base Fyta Coordinator entity."""
@@ -18,7 +24,7 @@ class FytaCoordinatorEntity(CoordinatorEntity[FytaCoordinator]):
     def __init__(
         self,
         coordinator: FytaCoordinator,
-        entry: ConfigEntry,
+        entry: FytaConfigEntry,
         description: SensorEntityDescription,
     ) -> None:
         """Initialize the FytaCoordinator sensor."""
@@ -43,7 +49,7 @@ class FytaPlantEntity(CoordinatorEntity[FytaCoordinator]):
     def __init__(
         self,
         coordinator: FytaCoordinator,
-        entry: ConfigEntry,
+        entry: FytaConfigEntry,
         description: SensorEntityDescription,
         plant_id: int,
     ) -> None:
@@ -56,25 +62,18 @@ class FytaPlantEntity(CoordinatorEntity[FytaCoordinator]):
             manufacturer="Fyta",
             model="Plant",
             identifiers={(DOMAIN, f"{entry.entry_id}-{plant_id}")},
-            name=self.plant.get("name"),
+            name=self.plant.name,
             via_device=(DOMAIN, entry.entry_id),
-            sw_version=self.plant.get("sw_version"),
+            sw_version=self.plant.sw_version,
         )
         self.entity_description = description
 
     @property
-    def plant(self) -> dict[str, Any]:
+    def plant(self) -> Plant:
         """Get plant data."""
-        return self.coordinator.data.get(self.plant_id, {})
+        return self.coordinator.data[self.plant_id]
 
     @property
     def available(self) -> bool:
         """Test if entity is available."""
-        if self.plant_id not in self.coordinator.data:
-            return False
-        if self.entity_description.key.count("status") > 0:
-            #FYTA status scale is 1 to 5, set unavailable if different status is reported
-            value = self.plant[self.entity_description.key]
-            if value is None or value < 1 or value > 5:
-                return False
-        return super().available
+        return super().available and self.plant_id in self.coordinator.data
