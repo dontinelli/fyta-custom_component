@@ -26,7 +26,7 @@ async def async_setup_entry(
     plant_entities: list[FytaPlantImageEntity] = [
         FytaPlantImageEntity(coordinator, entry, description, plant_id)
         for plant_id in coordinator.fyta.plant_list
-        if "plant_origin_path" in dir(coordinator.data[plant_id])
+        if "plant_origin_path" in dir(coordinator.data.get(plant_id))
     ]
 
     async_add_entities(plant_entities)

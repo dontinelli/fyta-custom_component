@@ -47,7 +47,7 @@ async def async_setup_entry(
         FytaPlantBinarySensor(coordinator, entry, sensor, plant_id)
         for plant_id in coordinator.fyta.plant_list
         for sensor in BINARY_SENSORS
-        if sensor.key in dir(coordinator.data[plant_id])
+        if sensor.key in dir(coordinator.data.get(plant_id))
     )
 
     async_add_entities(plant_entities)
