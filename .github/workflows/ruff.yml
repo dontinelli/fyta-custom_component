@@ -1,0 +1,28 @@
+name: "Ruff"
+
+on:
+  push:
+    branches:
+      - "main"
+  pull_request:
+    branches:
+      - "main"
+
+jobs:
+  ruff:
+    name: "Ruff"
+    runs-on: "ubuntu-latest"
+    steps:
+        - name: ⤵️ Checkout the repository
+          uses: actions/checkout@v4.1.7
+        - name: 🏗 Set up Python
+          uses: actions/setup-python@v5.0.0
+          with:
+            python-version: "3.12"
+            cache: "pip"
+        - name: 🏗 Install requirements
+          run: python3 -m pip install -r requirements.txt
+        - name: 🏗 Install ruff
+          run: python3 -m pip install ruff
+        - name: 🚀 Run
+          run: python3 -m ruff check ./custom_components/fyta
