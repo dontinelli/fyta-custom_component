@@ -12,5 +12,5 @@
   "requirements": [
     "fyta_cli>=0.6.10"
   ],
-  "version": "0.1.12"
+  "version": "0.1.13"
 }
