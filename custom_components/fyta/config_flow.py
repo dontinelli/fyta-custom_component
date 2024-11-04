@@ -23,7 +23,6 @@ from homeassistant.helpers.selector import (
     TextSelectorType,
 )
 
-from . import FytaConfigEntry
 from .const import CONF_EXPIRATION, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
