@@ -3,7 +3,8 @@
 This repository contains a custom integration for Home Assistant to monitor FYTA plants. The integration may eventually be implemented as core integration. Until then (or for easier adjustments to your desires), feel free to use this custom component.
 
 > [!CAUTION]
-> Please note that this integration is still in early development. Your testing is welcome, but please use at your own risk. Thank you for reporting any [issues or feature requests](https://github.com/dontinelli/fyta-custom_component/issues).
+> In the past, the core component has received a lot of care and basically all features, that initially only were available in the custom components (such as for example the binary sensors or the image entity), have been implemented into the core component. Furthermore, the core component has (again) reached the platinum state on the new quality scale.
+> Currently this custom component is not further maintained. Users are advised to migrate to the fyta core component to receive future improvements and bug fixes.
 
 # Installation
 ## With HACS
